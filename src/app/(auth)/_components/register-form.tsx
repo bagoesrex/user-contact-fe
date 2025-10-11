@@ -16,14 +16,18 @@ const formSchema = z.object({
     password: z.string()
         .min(1, { message: "Password is required." })
         .max(100, { message: "Password must be at most 100 characters long." }),
+    name: z.string()
+        .min(1, { message: "Name is required." })
+        .max(100, { message: "Name must be at most 100 characters long." }),
 });
 
-export default function LoginForm() {
+export default function RegisterForm() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             username: "",
-            password: ""
+            password: "",
+            name: ""
         },
     });
 
@@ -71,6 +75,24 @@ export default function LoginForm() {
                                     type="password"
                                     placeholder="••••••••"
                                     autoComplete="current-password"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Name</FormLabel>
+                            <FormControl>
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    placeholder="Si Kucink"
                                     {...field}
                                 />
                             </FormControl>
