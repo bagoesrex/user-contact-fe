@@ -12,7 +12,8 @@ import { toast } from "sonner";
 const formSchema = z.object({
     username: z.string()
         .min(1, { message: "Username is required." })
-        .max(100, { message: "Username must be at most 100 characters long." }),
+        .max(100, { message: "Username must be at most 100 characters long." })
+        .regex(/^\S+$/, { message: "Username cannot contain spaces." }),
     password: z.string()
         .min(1, { message: "Password is required." })
         .max(100, { message: "Password must be at most 100 characters long." }),
