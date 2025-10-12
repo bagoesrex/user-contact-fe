@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     username: z.string()
@@ -20,6 +21,8 @@ const formSchema = z.object({
 });
 
 export default function LoginForm() {
+    const router = useRouter()
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -45,6 +48,9 @@ export default function LoginForm() {
 
             toast.success(data.message);
 
+            setTimeout(() => {
+                router.push("/dashboard");
+            }, 800);
         } catch (err) {
             console.error(err)
             toast.error("Terjadi kesalahan pada server.");
