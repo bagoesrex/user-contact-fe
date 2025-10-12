@@ -28,15 +28,27 @@ export default function LoginForm() {
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        toast("You submitted the following values", {
-            description: (
-                <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-                    <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-                </pre>
-            ),
-        });
-        console.log(values)
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        try {
+            const res = await fetch("/api/users/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                toast.error(data.message);
+                return;
+            }
+
+            toast.success(data.message);
+
+        } catch (err) {
+            console.error(err)
+            toast.error("Terjadi kesalahan pada server.");
+        }
     };
 
     return (
