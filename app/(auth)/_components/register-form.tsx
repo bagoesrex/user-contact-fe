@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
     username: z.string()
@@ -23,6 +26,9 @@ const formSchema = z.object({
 });
 
 export default function RegisterForm() {
+    const router = useRouter()
+    const [isLoading, setIsLoading] = useState(false)
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -32,15 +38,34 @@ export default function RegisterForm() {
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        toast("You submitted the following values", {
-            description: (
-                <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-                    <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-                </pre>
-            ),
-        });
-        console.log(values)
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsLoading(true)
+
+        try {
+            const res = await fetch("/api/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                toast.error(data.message);
+                return;
+            }
+
+            toast.success(data.message);
+
+            setTimeout(() => {
+                router.push("/login");
+            }, 800);
+        } catch (err) {
+            console.error(err)
+            toast.error("Terjadi kesalahan pada server.");
+        } finally {
+            setIsLoading(false)
+        }
     };
 
     return (
@@ -101,7 +126,16 @@ export default function RegisterForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" className="w-full">Submit</Button>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Loading...
+                        </>
+                    ) : (
+                        "Submit"
+                    )}
+                </Button>
             </form>
         </Form>
     )
