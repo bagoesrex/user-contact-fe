@@ -1,7 +1,11 @@
+import CreateCard from "./_components/create-card";
+
 export default function DashboardPage() {
     return (
-        <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-            <h1 className="text-center font-bold">Dashboard Page</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto w-full mt-14 py-2 px-2 gap-3">
+            <CreateCard />
+            <CreateCard />
+            <CreateCard />
         </div>
     )
 }
