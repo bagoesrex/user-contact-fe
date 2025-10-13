@@ -9,6 +9,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
     username: z.string()
@@ -22,6 +24,7 @@ const formSchema = z.object({
 
 export default function LoginForm() {
     const router = useRouter()
+    const [isLoading, setIsLoading] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -32,6 +35,8 @@ export default function LoginForm() {
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsLoading(true)
+
         try {
             const res = await fetch("/api/users/login", {
                 method: "POST",
@@ -54,6 +59,8 @@ export default function LoginForm() {
         } catch (err) {
             console.error(err)
             toast.error("Terjadi kesalahan pada server.");
+        } finally {
+            setIsLoading(false)
         }
     };
 
@@ -97,7 +104,16 @@ export default function LoginForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" className="w-full">Submit</Button>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Loading...
+                        </>
+                    ) : (
+                        "Submit"
+                    )}
+                </Button>
             </form>
         </Form>
     )
