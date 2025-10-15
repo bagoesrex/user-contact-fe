@@ -3,7 +3,7 @@ import { UserPlus } from "lucide-react";
 
 export default function CreateCard() {
     return (
-        <Card className="max-h-50 justify-center items-center border-2 border-dashed border-primary bg-gray-100/50">
+        <Card className="justify-center items-center border-2 border-dashed border-primary bg-gray-100/50 w-full h-full cursor-pointer">
             <CardContent className="flex flex-col justify-center items-center gap-3">
                 <div className="bg-primary rounded-full size-fit p-3 flex justify-center items-center">
                     <UserPlus color="white" size={32} />
