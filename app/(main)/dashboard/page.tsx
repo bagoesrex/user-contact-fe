@@ -8,6 +8,7 @@ export default function DashboardPage() {
             <CreateContactDialog />
             {contacts.map((contact) =>
                 <ContactCard
+                    key={contact.id}
                     id={contact.id}
                     first_name={contact.first_name}
                     last_name={contact.last_name}
