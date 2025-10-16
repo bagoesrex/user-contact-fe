@@ -46,11 +46,14 @@ export default function Header() {
                     <Contact size={22} />
                     <h1 className="text-lg font-semibold tracking-tight">{APP_CONFIG.name}</h1>
                 </div>
-                <div className="flex gap-5 items-center">
-                    <div className="flex items-center gap-2">
+                <div className="flex gap-1 items-center">
+                    <Button
+                        onClick={() => router.push("/dashboard/profile")}
+                        className="cursor-pointer flex items-center gap-2 hover:bg-background/20"
+                    >
                         <CircleUser size={17} />
                         <p className="text-sm">Profile</p>
-                    </div>
+                    </Button>
                     <Button
                         onClick={handleLogout}
                         disabled={isLoading}
