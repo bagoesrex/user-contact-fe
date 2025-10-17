@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Save } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 const formSchema = z.object({
@@ -26,7 +27,30 @@ export default function EditProfileForm() {
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        // Todo implemented
+        setIsLoading(true)
+
+        try {
+            const res = await fetch("/api/users/current", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values)
+            })
+
+            const data = await res.json()
+
+            if (!res.ok) {
+                toast.error(data.message)
+                return;
+            }
+
+            toast.success(data.message)
+
+        } catch (err) {
+            console.error(err)
+            toast.error("Terjadi kesalahan pada server.")
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (

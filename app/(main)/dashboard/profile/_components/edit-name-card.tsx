@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserRoundPen } from "lucide-react";
-import EditProfileForm from "./edit-profile-form";
+import EditProfileForm from "./edit-name-form";
 
 export default function EditProfileCard() {
     return (

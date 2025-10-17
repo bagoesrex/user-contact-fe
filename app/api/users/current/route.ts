@@ -44,3 +44,51 @@ export async function DELETE() {
         return NextResponse.json({ message: "Server error" }, { status: 500 });
     }
 }
+
+export async function PATCH(req: Request) {
+    const body = await req.json();
+    const fieldName = Object.keys(body)[0];
+
+    try {
+        const token = (await cookies()).get("auth-token")?.value;
+
+        if (!token) {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        }
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/current`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+            },
+            body: JSON.stringify(body),
+        });
+
+        const json = await res.json();
+
+        console.log(json)
+
+        if (!res.ok) {
+            return NextResponse.json(
+                { message: json.message || `Gagal mengganti ${fieldName}` },
+                { status: res.status }
+            );
+        }
+
+        const data = json.data;
+
+        const response = NextResponse.json({
+            data: {
+                name: data.name,
+                username: data.username,
+            },
+            message: `Berhasil mengganti ${fieldName}`,
+        });
+
+        return response;
+    } catch (err) {
+        console.error(err)
+        return NextResponse.json({ message: "Server error" }, { status: 500 });
+    }
+}

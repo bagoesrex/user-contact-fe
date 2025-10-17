@@ -1,4 +1,4 @@
-import EditProfileCard from "./_components/edit-profile-card";
+import EditProfileCard from "./_components/edit-name-card";
 
 export default function ProfilePage() {
     return (
