@@ -4,25 +4,25 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Save } from "lucide-react";
+import { KeyRound, Loader2, Save } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
 const formSchema = z.object({
-    name: z.string()
-        .min(1, { message: "Name is required." })
-        .max(100, { message: "Name must be at most 100 characters long." })
+    password: z.string()
+        .min(1, { message: "Password is required." })
+        .max(100, { message: "Password must be at most 100 characters long." })
 });
 
-export default function EditNameForm() {
+export default function EditPasswordForm() {
     const [isLoading, setIsLoading] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: ""
+            password: ""
         },
     });
 
@@ -58,15 +58,16 @@ export default function EditNameForm() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                     control={form.control}
-                    name="name"
+                    name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>Password</FormLabel>
                             <FormControl>
                                 <Input
-                                    id="name"
-                                    type="text"
-                                    placeholder="Si Kucink"
+                                    id="password"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    autoComplete="current-password"
                                     {...field}
                                 />
                             </FormControl>
@@ -82,8 +83,8 @@ export default function EditNameForm() {
                         </>
                     ) : (
                         <>
-                            <Save />
-                            Update Profile
+                            <KeyRound />
+                            Update Password
                         </>
                     )}
                 </Button>
