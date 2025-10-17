@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { UserPlus } from "lucide-react";
 
-export default function CreateCard() {
+export default function CreateContactCard() {
     return (
         <Card className="justify-center items-center border-2 border-dashed border-primary bg-gray-100/50 w-full h-full cursor-pointer">
             <CardContent className="flex flex-col justify-center items-center gap-3">
