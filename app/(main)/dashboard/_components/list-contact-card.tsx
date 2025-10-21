@@ -1,17 +1,18 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CircleUserRound, Mail, Phone, SquarePen, Trash } from "lucide-react"
+import { CircleUserRound, Mail, Phone, SquarePen } from "lucide-react"
 import DeleteContactDialog from "./delete-contact-dialog"
 
-interface ContactProps {
+interface ListContactProps {
     id: number
     first_name: string
     last_name: string
     email: string
     phone: string
+    onSuccess: () => void
 }
 
-export default function ListContactCard({ id, first_name, last_name, email, phone }: ContactProps) {
+export default function ListContactCard({ id, first_name, last_name, email, phone, onSuccess }: ListContactProps) {
     const details = [
         { icon: Mail, value: email },
         { icon: Phone, value: phone },
@@ -43,7 +44,7 @@ export default function ListContactCard({ id, first_name, last_name, email, phon
                             <p className="text-sm">Edit</p>
                         </>
                     </Button>
-                    <DeleteContactDialog contactId={id} />
+                    <DeleteContactDialog contactId={id} onSuccess={onSuccess} />
                 </div>
             </CardContent>
         </Card>

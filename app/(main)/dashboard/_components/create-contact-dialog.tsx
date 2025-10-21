@@ -28,7 +28,11 @@ const contactSchema = z.object({
         .regex(/^[0-9+]+$/, { message: "Phone number must contain only digits or '+'." })
 })
 
-export function CreateContactDialog() {
+interface CreateContactDialogProps {
+    onSuccess: () => void
+}
+
+export function CreateContactDialog({ onSuccess }: CreateContactDialogProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
@@ -62,6 +66,7 @@ export function CreateContactDialog() {
             toast.success("Berhasil membuat contact!")
             form.reset()
             setIsOpen(false)
+            onSuccess()
         } catch (err) {
             console.error(err)
             toast.error("Terjadi kesalahan pada server.")
@@ -148,11 +153,11 @@ export function CreateContactDialog() {
 
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" disabled={isLoading}>
+                                <Button type="button" variant="outline" disabled={isLoading} className="cursor-pointer">
                                     Cancel
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" disabled={isLoading}>
+                            <Button type="submit" disabled={isLoading} className="cursor-pointer">
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

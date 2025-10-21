@@ -9,9 +9,10 @@ import { toast } from "sonner";
 
 interface DeleteContactDialogProps {
     contactId: number
+    onSuccess: () => void
 }
 
-export default function DeleteContactDialog({ contactId }: DeleteContactDialogProps) {
+export default function DeleteContactDialog({ contactId, onSuccess }: DeleteContactDialogProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
@@ -32,6 +33,7 @@ export default function DeleteContactDialog({ contactId }: DeleteContactDialogPr
 
             toast.success(data.message || "Contact berhasil dihapus");
             setIsOpen(false)
+            onSuccess()
         } catch (err) {
             console.log(err)
             toast.error("Server error, please try again later.");

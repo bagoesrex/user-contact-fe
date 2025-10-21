@@ -9,30 +9,29 @@ import ListContactCard from "./list-contact-card";
 export default function ContactWrapper() {
     const [contacts, setContacts] = useState<Contact[]>([]);
 
-    useEffect(() => {
-        async function fetchContacts() {
-            try {
-                const res = await fetch("/api/contacts");
-                const data = await res.json();
+    async function fetchContacts() {
+        try {
+            const res = await fetch("/api/contacts");
+            const data = await res.json();
 
-                if (!res.ok) {
-                    toast.error(data.message)
-                }
-
-                toast.success(data.message)
-                setContacts(data.contacts || []);
-            } catch (err) {
-                console.error(err)
-                toast.error("Terjadi kesalahan pada server.");
+            if (!res.ok) {
+                toast.error(data.message)
             }
-        }
 
+            setContacts(data.contacts || []);
+        } catch (err) {
+            console.error(err)
+            toast.error("Terjadi kesalahan pada server.");
+        }
+    }
+
+    useEffect(() => {
         fetchContacts();
     }, []);
 
     return (
         <>
-            <CreateContactDialog />
+            <CreateContactDialog onSuccess={fetchContacts} />
             {
                 contacts.map((contact) => (
                     <ListContactCard
@@ -42,6 +41,7 @@ export default function ContactWrapper() {
                         last_name={contact.last_name}
                         email={contact.email}
                         phone={contact.phone}
+                        onSuccess={fetchContacts}
                     />
                 ))
             }
