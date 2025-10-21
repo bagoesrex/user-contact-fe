@@ -42,10 +42,13 @@ export default function Header() {
     return (
         <header className="fixed top-0 w-full z-50 bg-primary text-primary-foreground shadow-sm">
             <div className="max-w-5xl mx-auto flex items-center justify-between h-14 px-4">
-                <div className="flex gap-2 items-center">
-                    <Contact size={22} />
+                <Button
+                    onClick={() => router.push("/dashboard")}
+                    className="cursor-pointer flex items-center gap-2 hover:bg-background/20"
+                >
+                    <Contact size={17} />
                     <h1 className="text-lg font-semibold tracking-tight">{APP_CONFIG.name}</h1>
-                </div>
+                </Button>
                 <div className="flex gap-1 items-center">
                     <Button
                         onClick={() => router.push("/dashboard/profile")}
