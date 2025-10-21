@@ -92,3 +92,43 @@ export async function PATCH(req: Request) {
         return NextResponse.json({ message: "Server error" }, { status: 500 });
     }
 }
+
+export async function GET() {
+    const token = (await cookies()).get("auth-token")?.value;
+
+    if (!token) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/current`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+            },
+        });
+
+        const { data } = await res.json();
+
+        if (!res.ok) {
+            return NextResponse.json(
+                { message: data.message || "Gagal memuat profile" },
+                { status: res.status }
+            );
+        }
+
+        const response = NextResponse.json({
+            user: {
+                username: data.username,
+                name: data.name,
+            },
+            message: "Berhasil memuat profile",
+        });
+
+        return response;
+    } catch (err) {
+        console.error(err)
+        return NextResponse.json({ message: "Server error" }, { status: 500 });
+    }
+}

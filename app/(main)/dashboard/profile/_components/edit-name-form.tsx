@@ -3,9 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/providers/auth-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Save } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -17,6 +18,7 @@ const formSchema = z.object({
 });
 
 export default function EditNameForm() {
+    const { user, refreshUser } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -25,6 +27,10 @@ export default function EditNameForm() {
             name: ""
         },
     });
+
+    useEffect(() => {
+        if (user?.name) form.setValue("name", user.name);
+    }, [user, form]);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true)
@@ -44,7 +50,7 @@ export default function EditNameForm() {
             }
 
             toast.success(data.message)
-
+            await refreshUser();
         } catch (err) {
             console.error(err)
             toast.error("Terjadi kesalahan pada server.")
