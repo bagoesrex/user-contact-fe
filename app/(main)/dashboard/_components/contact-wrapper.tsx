@@ -36,11 +36,7 @@ export default function ContactWrapper() {
                 contacts.map((contact) => (
                     <ListContactCard
                         key={contact.id}
-                        id={contact.id}
-                        first_name={contact.first_name}
-                        last_name={contact.last_name}
-                        email={contact.email}
-                        phone={contact.phone}
+                        contact={contact}
                         onSuccess={fetchContacts}
                     />
                 ))

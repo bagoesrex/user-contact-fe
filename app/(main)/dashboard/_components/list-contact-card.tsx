@@ -1,21 +1,18 @@
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CircleUserRound, Mail, Phone, SquarePen } from "lucide-react"
+import { CircleUserRound, Mail, Phone } from "lucide-react"
 import DeleteContactDialog from "./delete-contact-dialog"
+import { Contact } from "@/types/contact"
+import UpdateContactDialog from "./update-contact-dialog"
 
 interface ListContactProps {
-    id: number
-    first_name: string
-    last_name: string
-    email: string
-    phone: string
+    contact: Contact
     onSuccess: () => void
 }
 
-export default function ListContactCard({ id, first_name, last_name, email, phone, onSuccess }: ListContactProps) {
+export default function ListContactCard({ contact, onSuccess }: ListContactProps) {
     const details = [
-        { icon: Mail, value: email },
-        { icon: Phone, value: phone },
+        { icon: Mail, value: contact.email },
+        { icon: Phone, value: contact.phone },
     ]
 
     return (
@@ -26,7 +23,7 @@ export default function ListContactCard({ id, first_name, last_name, email, phon
                         <CircleUserRound color="white" size={25} />
                     </div>
                     <h2 className="text-xl font-bold">
-                        {`${first_name} ${last_name}`}
+                        {`${contact.first_name} ${contact.last_name}`}
                     </h2>
                 </CardTitle>
             </CardHeader>
@@ -38,13 +35,8 @@ export default function ListContactCard({ id, first_name, last_name, email, phon
                     </div>
                 ))}
                 <div className="flex gap-2 justify-end">
-                    <Button className="cursor-pointer">
-                        <>
-                            <SquarePen size={12} />
-                            <p className="text-sm">Edit</p>
-                        </>
-                    </Button>
-                    <DeleteContactDialog contactId={id} onSuccess={onSuccess} />
+                    <UpdateContactDialog contact={contact} onSuccess={onSuccess} />
+                    <DeleteContactDialog contactId={contact.id} onSuccess={onSuccess} />
                 </div>
             </CardContent>
         </Card>

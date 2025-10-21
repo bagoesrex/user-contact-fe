@@ -2,13 +2,14 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function DELETE(_: Request, { params }: { params: { contactId: string } }) {
-    try {
-        const token = (await cookies()).get("auth-token")?.value;
-        const { contactId } = params
+    const { contactId } = params
+    const token = (await cookies()).get("auth-token")?.value;
 
-        if (!token) {
-            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-        }
+    if (!token) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contacts/${contactId}`, {
             method: "DELETE",
@@ -29,6 +30,47 @@ export async function DELETE(_: Request, { params }: { params: { contactId: stri
         const response = NextResponse.json({
             data: json.data,
             message: "Berhasil menghapus contact",
+        });
+
+        return response;
+    } catch (err) {
+        console.error(err)
+        return NextResponse.json({ message: "Server error" }, { status: 500 });
+    }
+}
+
+export async function PUT(req: Request, { params }: { params: { contactId: string } }) {
+    const { contactId } = params
+    const token = (await cookies()).get("auth-token")?.value;
+
+    if (!token) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
+        const body = await req.json();
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contacts/${contactId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+            },
+            body: JSON.stringify(body),
+        });
+
+        const json = await res.json();
+
+        if (!res.ok) {
+            return NextResponse.json(
+                { message: json.message || "Gagal mengupdate contact" },
+                { status: res.status }
+            );
+        }
+
+        const response = NextResponse.json({
+            data: json.data,
+            message: "Berhasil mengupdate contact",
         });
 
         return response;
