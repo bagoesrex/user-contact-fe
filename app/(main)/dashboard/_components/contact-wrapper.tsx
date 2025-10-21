@@ -2,9 +2,9 @@
 
 import { CreateContactDialog } from "./create-contact-dialog";
 import { Contact } from "@/types/contact";
-import ContactCard from "./contact-card";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import ListContactCard from "./list-contact-card";
 
 export default function ContactWrapper() {
     const [contacts, setContacts] = useState<Contact[]>([]);
@@ -35,7 +35,7 @@ export default function ContactWrapper() {
             <CreateContactDialog />
             {
                 contacts.map((contact) => (
-                    <ContactCard
+                    <ListContactCard
                         key={contact.id}
                         id={contact.id}
                         first_name={contact.first_name}
