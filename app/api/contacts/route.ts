@@ -19,7 +19,6 @@ export async function GET() {
         });
 
         const json = await res.json();
-        console.log(json)
 
         if (!res.ok) {
             return NextResponse.json(
@@ -30,9 +29,6 @@ export async function GET() {
 
         const contacts = json.data || [];
         const paging = json.paging || {};
-
-        console.log(contacts)
-        console.log(paging)
 
         const response = NextResponse.json({
             contacts: contacts.map((contact: Contact) => ({
@@ -55,8 +51,6 @@ export async function GET() {
 
 export async function POST(req: Request) {
     const token = (await cookies()).get("auth-token")?.value;
-
-    console.log(token)
 
     if (!token) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

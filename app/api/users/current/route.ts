@@ -67,8 +67,6 @@ export async function PATCH(req: Request) {
 
         const json = await res.json();
 
-        console.log(json)
-
         if (!res.ok) {
             return NextResponse.json(
                 { message: json.message || `Gagal mengganti ${fieldName}` },
