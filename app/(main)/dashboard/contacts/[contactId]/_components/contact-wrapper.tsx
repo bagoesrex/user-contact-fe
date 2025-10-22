@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import ContactCard from "./contact-card";
 import { Contact } from "@/types/contact";
-import { Loader2 } from "lucide-react";
+import { ArrowLeft, IdCard, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface ContactWrapperProps {
     contactId: string;
@@ -44,7 +46,22 @@ export default function ContactWrapper({ contactId }: ContactWrapperProps) {
     }
 
     return (
-        <div className="max-w-5xl mx-auto w-full mt-14 p-2 gap-3">
+        <div className="max-w-5xl mx-auto w-full mt-14 p-2 space-y-2.5">
+            <div className="relative flex items-center justify-between">
+                <Button variant={"link"} asChild>
+                    <Link href={`/dashboard`}>
+                        <ArrowLeft />
+                        <span>Back to Dashboard</span>
+                    </Link>
+                </Button>
+
+                <div className="absolute left-1/2 -translate-x-1/2 flex flex-row items-center gap-2">
+                    <IdCard size={30} />
+                    <h1 className="text-2xl font-bold">
+                        Contact Details
+                    </h1>
+                </div>
+            </div>
             <ContactCard contact={contact} />
         </div>
     );
