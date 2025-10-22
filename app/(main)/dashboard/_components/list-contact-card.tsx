@@ -1,8 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CircleUserRound, Mail, Phone } from "lucide-react"
+import { BookUser, CircleUserRound, Mail, Phone } from "lucide-react"
 import DeleteContactDialog from "./delete-contact-dialog"
 import { Contact } from "@/types/contact"
 import UpdateContactDialog from "./update-contact-dialog"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 interface ListContactProps {
     contact: Contact
@@ -35,10 +37,16 @@ export default function ListContactCard({ contact, onSuccess }: ListContactProps
                     </div>
                 ))}
                 <div className="flex gap-2 justify-end">
+                    <Button className="cursor-pointer self-start" asChild>
+                        <Link href={`/dashboard/contacts/${contact.id}`}>
+                            <BookUser size={12} />
+                            <p className="text-sm">Detail</p>
+                        </Link >
+                    </Button>
                     <UpdateContactDialog contact={contact} onSuccess={onSuccess} />
                     <DeleteContactDialog contactId={contact.id} onSuccess={onSuccess} />
                 </div>
             </CardContent>
-        </Card>
+        </Card >
     )
 }
