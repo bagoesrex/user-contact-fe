@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Contact } from "@/types/contact";
-import { Mail, Phone, User, UserCog } from "lucide-react";
+import { Mail, MapPin, Phone, User, UserCog } from "lucide-react";
+import AddressWrapper from "./address-wrapper";
 
 interface ContactCardProps {
     contact: Contact
@@ -47,6 +48,13 @@ export default function ContactCard({ contact }: ContactCardProps) {
                         <span>Phone</span>
                     </div>
                     <p className="pl-8 font-medium text-md">{contact.phone}</p>
+                </div>
+                <div className="space-y-3 mt-2">
+                    <div className="flex flex-row gap-2 items-center">
+                        <MapPin />
+                        <h3 className="text-md font-bold">Addresses</h3>
+                    </div>
+                    <AddressWrapper contactId={contact.id} />
                 </div>
             </CardContent>
         </Card>
