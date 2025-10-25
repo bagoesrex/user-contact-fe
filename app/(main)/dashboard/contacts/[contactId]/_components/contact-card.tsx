@@ -2,12 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Contact } from "@/types/contact";
 import { Mail, MapPin, Phone, User, UserCog } from "lucide-react";
 import AddressWrapper from "./address-wrapper";
+import { Address } from "@/types/address";
 
 interface ContactCardProps {
     contact: Contact
+    addresses: Address[]
 }
 
-export default function ContactCard({ contact }: ContactCardProps) {
+export default function ContactCard({ contact, addresses }: ContactCardProps) {
     return (
         <Card className="border-2 border-primary bg-gray-100/50">
             <CardHeader>
@@ -54,7 +56,7 @@ export default function ContactCard({ contact }: ContactCardProps) {
                         <MapPin />
                         <h3 className="text-md font-bold">Addresses</h3>
                     </div>
-                    <AddressWrapper contactId={contact.id} />
+                    <AddressWrapper contactId={contact.id} addresses={addresses} />
                 </div>
             </CardContent>
         </Card>

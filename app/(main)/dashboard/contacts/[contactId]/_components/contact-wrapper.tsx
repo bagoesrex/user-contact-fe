@@ -7,6 +7,7 @@ import { Contact } from "@/types/contact";
 import { ArrowLeft, IdCard, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Address } from "@/types/address";
 
 interface ContactWrapperProps {
     contactId: string;
@@ -14,6 +15,7 @@ interface ContactWrapperProps {
 
 export default function ContactWrapper({ contactId }: ContactWrapperProps) {
     const [contact, setContact] = useState<Contact>();
+    const [addresses, setAddresses] = useState<Address[]>([])
 
     async function fetchContact() {
         try {
@@ -32,8 +34,26 @@ export default function ContactWrapper({ contactId }: ContactWrapperProps) {
         }
     }
 
+    async function fetchAddresses() {
+        try {
+            const res = await fetch(`/api/contacts/${contactId}/addresses`)
+            const data = await res.json()
+
+            if (!res.ok) {
+                toast.error(data.message);
+                return;
+            }
+
+            setAddresses(data.addresses || []);
+        } catch (err) {
+            console.error(err);
+            toast.error("Terjadi kesalahan pada server.");
+        }
+    }
+
     useEffect(() => {
         fetchContact();
+        fetchAddresses()
     }, [contactId]);
 
     if (!contact) {
@@ -62,7 +82,7 @@ export default function ContactWrapper({ contactId }: ContactWrapperProps) {
                     </h1>
                 </div>
             </div>
-            <ContactCard contact={contact} />
+            <ContactCard contact={contact} addresses={addresses} />
         </div>
     );
 }
