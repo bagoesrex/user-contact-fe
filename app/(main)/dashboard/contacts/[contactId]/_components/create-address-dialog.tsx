@@ -22,9 +22,10 @@ const addressSchema = z.object({
 
 interface CreateAddressDialogProps {
     contactId: number
+    onSuccess: () => void
 }
 
-export function CreateAddressDialog({ contactId }: CreateAddressDialogProps) {
+export function CreateAddressDialog({ contactId, onSuccess }: CreateAddressDialogProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
@@ -57,6 +58,7 @@ export function CreateAddressDialog({ contactId }: CreateAddressDialogProps) {
             }
 
             toast.success("Berhasil membuat address!")
+            onSuccess()
             form.reset()
             setIsOpen(false)
         } catch (err) {

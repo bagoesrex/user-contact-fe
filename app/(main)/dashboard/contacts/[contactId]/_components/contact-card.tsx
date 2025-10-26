@@ -7,9 +7,10 @@ import { Address } from "@/types/address";
 interface ContactCardProps {
     contact: Contact
     addresses: Address[]
+    onSuccess: () => void
 }
 
-export default function ContactCard({ contact, addresses }: ContactCardProps) {
+export default function ContactCard({ contact, addresses, onSuccess }: ContactCardProps) {
     return (
         <Card className="border-2 border-primary bg-gray-100/50">
             <CardHeader>
@@ -56,7 +57,7 @@ export default function ContactCard({ contact, addresses }: ContactCardProps) {
                         <MapPin />
                         <h3 className="text-md font-bold">Addresses</h3>
                     </div>
-                    <AddressWrapper contactId={contact.id} addresses={addresses} />
+                    <AddressWrapper contactId={contact.id} addresses={addresses} onSuccess={onSuccess} />
                 </div>
             </CardContent>
         </Card>

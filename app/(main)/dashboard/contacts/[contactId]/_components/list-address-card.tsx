@@ -4,6 +4,7 @@ import { Building2, Flag, House, Map, Signpost, StretchVertical } from "lucide-r
 
 interface ListAddressCardProps {
     address: Address
+    onSuccess: () => void
 }
 
 export default function ListAddressCard({ address }: ListAddressCardProps) {

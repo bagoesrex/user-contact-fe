@@ -70,7 +70,7 @@ export default function ContactWrapper({ contactId }: ContactWrapperProps) {
                     </h1>
                 </div>
             </div>
-            <ContactCard contact={contact} addresses={addresses} />
+            <ContactCard contact={contact} addresses={addresses} onSuccess={fetchContactData} />
         </div>
     );
 }
