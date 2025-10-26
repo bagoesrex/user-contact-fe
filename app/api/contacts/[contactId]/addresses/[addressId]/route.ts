@@ -10,7 +10,6 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ contact
     }
 
     try {
-
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contacts/${contactId}/addresses/${addressId}`, {
             method: "DELETE",
             headers: {
@@ -30,6 +29,47 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ contact
         const response = NextResponse.json({
             data: json.data,
             message: "Berhasil menghapus address",
+        });
+
+        return response;
+    } catch (err) {
+        console.error(err)
+        return NextResponse.json({ message: "Server error" }, { status: 500 });
+    }
+}
+
+export async function PUT(req: Request, { params }: { params: Promise<{ contactId: string, addressId: string }> }) {
+    const { contactId, addressId } = await params;
+    const token = (await cookies()).get("auth-token")?.value;
+
+    if (!token) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
+        const body = await req.json();
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contacts/${contactId}/addresses/${addressId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+            },
+            body: JSON.stringify(body),
+        });
+
+        const json = await res.json();
+
+        if (!res.ok) {
+            return NextResponse.json(
+                { message: json.message || "Gagal mengupdate address" },
+                { status: res.status }
+            );
+        }
+
+        const response = NextResponse.json({
+            data: json.data,
+            message: "Berhasil mengupdate adress",
         });
 
         return response;

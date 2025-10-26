@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Address } from "@/types/address";
 import { Building2, Flag, House, Map, Signpost, StretchVertical } from "lucide-react";
 import DeleteAddressDialog from "./delete-address-dialog";
+import UpdateAddressDialog from "./update-address-dialog";
 
 interface ListAddressCardProps {
     address: Address
@@ -44,6 +45,7 @@ export default function ListAddressCard({ address, contactId, onSuccess }: ListA
                     </div>
                 ))}
                 <div className="flex gap-2 justify-end">
+                    <UpdateAddressDialog contactId={contactId} address={address} onSuccess={onSuccess} />
                     <DeleteAddressDialog contactId={contactId} addressId={address.id} onSuccess={onSuccess} />
                 </div>
             </CardContent>
