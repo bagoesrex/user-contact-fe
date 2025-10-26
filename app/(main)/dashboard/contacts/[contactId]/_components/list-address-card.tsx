@@ -1,13 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Address } from "@/types/address";
 import { Building2, Flag, House, Map, Signpost, StretchVertical } from "lucide-react";
+import DeleteAddressDialog from "./delete-address-dialog";
 
 interface ListAddressCardProps {
     address: Address
+    contactId: number
     onSuccess: () => void
 }
 
-export default function ListAddressCard({ address }: ListAddressCardProps) {
+export default function ListAddressCard({ address, contactId, onSuccess }: ListAddressCardProps) {
     const details = [
         { icon: StretchVertical, description: "Street", value: address.street },
         { icon: Building2, description: "City", value: address.city },
@@ -17,7 +19,7 @@ export default function ListAddressCard({ address }: ListAddressCardProps) {
     ]
 
     return (
-        <Card className="h-60 justify-center border-2 border-primary bg-gray-100/50 gap-2">
+        <Card className="h-73 justify-center border-2 border-primary bg-gray-100/50 gap-2">
             <CardHeader>
                 <CardTitle className="flex flex-row items-center gap-3">
                     <div className="bg-primary rounded-full size-fit p-1 flex justify-center items-center">
@@ -41,6 +43,9 @@ export default function ListAddressCard({ address }: ListAddressCardProps) {
                         </div>
                     </div>
                 ))}
+                <div className="flex gap-2 justify-end">
+                    <DeleteAddressDialog contactId={contactId} addressId={address.id} onSuccess={onSuccess} />
+                </div>
             </CardContent>
         </Card >
     )

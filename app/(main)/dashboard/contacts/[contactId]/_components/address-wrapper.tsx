@@ -16,7 +16,10 @@ export default function AddressWrapper({ addresses, contactId, onSuccess }: Addr
                 addresses.map((address) => (
                     <ListAddressCard
                         key={address.id}
-                        address={address} onSuccess={onSuccess} />
+                        address={address}
+                        contactId={contactId}
+                        onSuccess={onSuccess}
+                    />
                 ))
             }
         </div>
