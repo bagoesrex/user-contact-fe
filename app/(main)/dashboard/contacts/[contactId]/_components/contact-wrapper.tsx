@@ -17,34 +17,23 @@ export default function ContactWrapper({ contactId }: ContactWrapperProps) {
     const [contact, setContact] = useState<Contact>();
     const [addresses, setAddresses] = useState<Address[]>([])
 
-    async function fetchContact() {
+    async function fetchContactData() {
         try {
-            const res = await fetch(`/api/contacts/${contactId}`);
-            const data = await res.json();
+            const [contactRes, addressRes] = await Promise.all([
+                fetch(`/api/contacts/${contactId}`),
+                fetch(`/api/contacts/${contactId}/addresses`)
+            ]);
 
-            if (!res.ok) {
-                toast.error(data.message);
-                return;
-            }
+            const [contactData, addressData] = await Promise.all([
+                contactRes.json(),
+                addressRes.json()
+            ]);
 
-            setContact(data.contact || null);
-        } catch (err) {
-            console.error(err);
-            toast.error("Terjadi kesalahan pada server.");
-        }
-    }
+            if (!contactRes.ok) toast.error(contactData.message);
+            if (!addressRes.ok) toast.error(addressData.message);
 
-    async function fetchAddresses() {
-        try {
-            const res = await fetch(`/api/contacts/${contactId}/addresses`)
-            const data = await res.json()
-
-            if (!res.ok) {
-                toast.error(data.message);
-                return;
-            }
-
-            setAddresses(data.addresses || []);
+            setContact(contactData.contact || null);
+            setAddresses(addressData.addresses || []);
         } catch (err) {
             console.error(err);
             toast.error("Terjadi kesalahan pada server.");
@@ -52,8 +41,7 @@ export default function ContactWrapper({ contactId }: ContactWrapperProps) {
     }
 
     useEffect(() => {
-        fetchContact();
-        fetchAddresses()
+        fetchContactData()
     }, [contactId]);
 
     if (!contact) {
