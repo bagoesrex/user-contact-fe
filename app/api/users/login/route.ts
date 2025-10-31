@@ -29,10 +29,6 @@ export async function POST(req: Request) {
         const data = json.data;
 
         const response = NextResponse.json({
-            user: {
-                username: data.username,
-                name: data.name,
-            },
             message: "Login berhasil",
         });
 
