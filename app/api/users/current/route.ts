@@ -26,7 +26,6 @@ export async function DELETE() {
         }
 
         const response = NextResponse.json({
-            data: json.data,
             message: "Logout successful",
         });
 
@@ -74,13 +73,7 @@ export async function PATCH(req: Request) {
             );
         }
 
-        const data = json.data;
-
         const response = NextResponse.json({
-            data: {
-                name: data.name,
-                username: data.username,
-            },
             message: `Berhasil mengganti ${fieldName}`,
         });
 
