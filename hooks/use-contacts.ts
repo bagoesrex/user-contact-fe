@@ -47,8 +47,34 @@ export function useCreateContact() {
             toast.success("Berhasil membuat contact!");
             queryClient.invalidateQueries({ queryKey: ["contacts"] });
         },
-        onError: () => {
-            toast.error("Terjadi kesalahan pada server.");
+        onError: (err: Error) => {
+            toast.error(err.message || "Terjadi kesalahan pada server.");
+        },
+    });
+}
+
+export function useUpdateContact() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ id, values }: { id: number; values: ContactInput }) => {
+            const res = await fetch(`/api/contacts/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Gagal memperbarui kontak");
+
+            return data as { contact: Contact };
+        },
+        onSuccess: () => {
+            toast.success("Berhasil memperbarui contact!");
+            queryClient.invalidateQueries({ queryKey: ["contacts"] });
+        },
+        onError: (err: Error) => {
+            toast.error(err.message || "Terjadi kesalahan pada server.");
         },
     });
 }

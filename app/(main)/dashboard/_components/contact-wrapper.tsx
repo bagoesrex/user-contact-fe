@@ -9,7 +9,7 @@ export default function ContactWrapper() {
 
     return (
         <>
-            <CreateContactDialog onSuccess={refetch} />
+            <CreateContactDialog />
             {
                 contacts.map((contact) => (
                     <ListContactCard

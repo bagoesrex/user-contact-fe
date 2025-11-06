@@ -2,12 +2,12 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { useUpdateContact } from "@/hooks/use-contacts"
 import { Contact } from "@/types/contact"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, SquarePen, UserPen } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { toast } from "sonner"
 import z from "zod"
 
 const contactSchema = z.object({
@@ -28,12 +28,10 @@ const contactSchema = z.object({
 
 interface UpdateContactDialogProps {
     contact: Contact
-    onSuccess: () => void
 }
 
-export default function UpdateContactDialog({ contact, onSuccess }: UpdateContactDialogProps) {
+export default function UpdateContactDialog({ contact }: UpdateContactDialogProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
 
     const form = useForm<z.infer<typeof contactSchema>>({
         resolver: zodResolver(contactSchema),
@@ -45,33 +43,18 @@ export default function UpdateContactDialog({ contact, onSuccess }: UpdateContac
         },
     })
 
+    const { mutate: updateContact, isPending } = useUpdateContact();
+
     async function onSubmit(values: z.infer<typeof contactSchema>) {
-        setIsLoading(true)
-
-        try {
-            const res = await fetch(`/api/contacts/${contact.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
-            })
-
-            const data = await res.json()
-
-            if (!res.ok) {
-                toast.error(data.message)
-                return
+        updateContact(
+            { id: contact.id, values },
+            {
+                onSuccess: () => {
+                    form.reset()
+                    setIsOpen(false)
+                },
             }
-
-            toast.success("Berhasil memperbarui contact!")
-            form.reset()
-            setIsOpen(false)
-            onSuccess()
-        } catch (err) {
-            console.error(err)
-            toast.error("Terjadi kesalahan pada server.")
-        } finally {
-            setIsLoading(false)
-        }
+        )
     }
 
     useEffect(() => {
@@ -164,12 +147,12 @@ export default function UpdateContactDialog({ contact, onSuccess }: UpdateContac
 
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" disabled={isLoading} className="cursor-pointer">
+                                <Button type="button" variant="outline" disabled={isPending} className="cursor-pointer">
                                     Cancel
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" disabled={isLoading} className="cursor-pointer">
-                                {isLoading ? (
+                            <Button type="submit" disabled={isPending} className="cursor-pointer">
+                                {isPending ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                         Saving...

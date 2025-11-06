@@ -43,7 +43,7 @@ export default function ListContactCard({ contact, onSuccess }: ListContactProps
                             <p className="text-sm">Detail</p>
                         </Link >
                     </Button>
-                    <UpdateContactDialog contact={contact} onSuccess={onSuccess} />
+                    <UpdateContactDialog contact={contact} />
                     <DeleteContactDialog contactId={contact.id} onSuccess={onSuccess} />
                 </div>
             </CardContent>
