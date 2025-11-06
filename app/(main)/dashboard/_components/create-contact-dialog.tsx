@@ -8,9 +8,9 @@ import z from "zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import CreateContactCard from "./create-contact-card";
+import { useCreateContact } from "@/hooks/use-contacts";
 
 const contactSchema = z.object({
     first_name: z.string()
@@ -28,13 +28,8 @@ const contactSchema = z.object({
         .regex(/^[0-9+]+$/, { message: "Phone number must contain only digits or '+'." })
 })
 
-interface CreateContactDialogProps {
-    onSuccess: () => void
-}
-
-export function CreateContactDialog({ onSuccess }: CreateContactDialogProps) {
+export function CreateContactDialog() {
     const [isOpen, setIsOpen] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
 
     const form = useForm<z.infer<typeof contactSchema>>({
         resolver: zodResolver(contactSchema),
@@ -46,34 +41,16 @@ export function CreateContactDialog({ onSuccess }: CreateContactDialogProps) {
         },
     })
 
-    async function onSubmit(values: z.infer<typeof contactSchema>) {
-        setIsLoading(true)
+    const { mutate: createContact, isPending } = useCreateContact();
 
-        try {
-            const res = await fetch("/api/contacts", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
-            })
-
-            const data = await res.json()
-
-            if (!res.ok) {
-                toast.error(data.message)
-                return
-            }
-
-            toast.success("Berhasil membuat contact!")
-            form.reset()
-            setIsOpen(false)
-            onSuccess()
-        } catch (err) {
-            console.error(err)
-            toast.error("Terjadi kesalahan pada server.")
-        } finally {
-            setIsLoading(false)
-        }
-    }
+    const onSubmit = (values: z.infer<typeof contactSchema>) => {
+        createContact(values, {
+            onSuccess: () => {
+                form.reset();
+                setIsOpen(false);
+            },
+        });
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -153,12 +130,12 @@ export function CreateContactDialog({ onSuccess }: CreateContactDialogProps) {
 
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" disabled={isLoading} className="cursor-pointer">
+                                <Button type="button" variant="outline" disabled={isPending} className="cursor-pointer">
                                     Cancel
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" disabled={isLoading} className="cursor-pointer">
-                                {isLoading ? (
+                            <Button type="submit" disabled={isPending} className="cursor-pointer">
+                                {isPending ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                         Saving...

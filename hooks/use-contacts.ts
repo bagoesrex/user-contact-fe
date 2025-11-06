@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Contact } from "@/types/contact";
+import { Contact, ContactInput } from "@/types/contact";
 
 export const useContacts = () => {
     return useQuery<Contact[]>({
@@ -26,3 +26,29 @@ export const useContacts = () => {
         refetchOnWindowFocus: false,
     });
 };
+
+export function useCreateContact() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (values: ContactInput) => {
+            const res = await fetch("/api/contacts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Gagal membuat kontak");
+
+            return data as { contact: Contact };
+        },
+        onSuccess: () => {
+            toast.success("Berhasil membuat contact!");
+            queryClient.invalidateQueries({ queryKey: ["contacts"] });
+        },
+        onError: () => {
+            toast.error("Terjadi kesalahan pada server.");
+        },
+    });
+}
