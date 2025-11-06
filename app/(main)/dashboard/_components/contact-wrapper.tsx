@@ -5,7 +5,7 @@ import ListContactCard from "./list-contact-card";
 import { useContacts } from "@/hooks/use-contacts";
 
 export default function ContactWrapper() {
-    const { data: contacts = [], refetch } = useContacts()
+    const { data: contacts = [] } = useContacts()
 
     return (
         <>
@@ -15,7 +15,6 @@ export default function ContactWrapper() {
                     <ListContactCard
                         key={contact.id}
                         contact={contact}
-                        onSuccess={refetch}
                     />
                 ))
             }

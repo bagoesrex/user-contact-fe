@@ -2,44 +2,25 @@
 
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useDeleteContact } from "@/hooks/use-contacts";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { Loader2, Trash } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface DeleteContactDialogProps {
     contactId: number
-    onSuccess: () => void
 }
 
-export default function DeleteContactDialog({ contactId, onSuccess }: DeleteContactDialogProps) {
+export default function DeleteContactDialog({ contactId }: DeleteContactDialogProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+    const { mutate: deleteContact, isPending } = useDeleteContact()
 
     async function handleDelete() {
-        setIsLoading(true)
-
-        try {
-            const res = await fetch(`/api/contacts/${contactId}`, {
-                method: "DELETE"
-            })
-
-            const data = await res.json()
-
-            if (!res.ok) {
-                toast.error(data.message || "Contact gagal dihapus");
-                return;
-            }
-
-            toast.success(data.message || "Contact berhasil dihapus");
-            setIsOpen(false)
-            onSuccess()
-        } catch (err) {
-            console.log(err)
-            toast.error("Server error, please try again later.");
-        } finally {
-            setIsLoading(false)
-        }
+        deleteContact(contactId, {
+            onSuccess: () => {
+                setIsOpen(false)
+            },
+        })
     }
 
     return (
@@ -65,9 +46,9 @@ export default function DeleteContactDialog({ contactId, onSuccess }: DeleteCont
                         variant="destructive"
                         className="cursor-pointer"
                         onClick={handleDelete}
-                        disabled={isLoading}
+                        disabled={isPending}
                     >
-                        {isLoading ? (
+                        {isPending ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 Deleting...

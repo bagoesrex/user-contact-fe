@@ -78,3 +78,27 @@ export function useUpdateContact() {
         },
     });
 }
+
+export function useDeleteContact() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (id: number) => {
+            const res = await fetch(`/api/contacts/${id}`, {
+                method: "DELETE",
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Gagal menghapus kontak");
+
+            return data;
+        },
+        onSuccess: () => {
+            toast.success("Berhasil menghapus contact!");
+            queryClient.invalidateQueries({ queryKey: ["contacts"] });
+        },
+        onError: (err: Error) => {
+            toast.error(err.message || "Terjadi kesalahan pada server.");
+        },
+    });
+}

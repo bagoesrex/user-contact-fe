@@ -8,10 +8,9 @@ import { Button } from "@/components/ui/button"
 
 interface ListContactProps {
     contact: Contact
-    onSuccess: () => void
 }
 
-export default function ListContactCard({ contact, onSuccess }: ListContactProps) {
+export default function ListContactCard({ contact }: ListContactProps) {
     const details = [
         { icon: Mail, value: contact.email },
         { icon: Phone, value: contact.phone },
@@ -44,7 +43,7 @@ export default function ListContactCard({ contact, onSuccess }: ListContactProps
                         </Link >
                     </Button>
                     <UpdateContactDialog contact={contact} />
-                    <DeleteContactDialog contactId={contact.id} onSuccess={onSuccess} />
+                    <DeleteContactDialog contactId={contact.id} />
                 </div>
             </CardContent>
         </Card >
