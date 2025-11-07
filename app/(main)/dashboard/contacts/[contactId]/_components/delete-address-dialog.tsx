@@ -2,45 +2,26 @@
 
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useDeleteAddress } from "@/hooks/use-addresses";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { Loader2, Trash } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface DeleteAddressDialogProps {
     contactId: number
     addressId: number
-    onSuccess: () => void
 }
 
-export default function DeleteAddressDialog({ contactId, addressId, onSuccess }: DeleteAddressDialogProps) {
+export default function DeleteAddressDialog({ contactId, addressId }: DeleteAddressDialogProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+    const { mutate: deleteContact, isPending } = useDeleteAddress(contactId)
 
     async function handleDelete() {
-        setIsLoading(true)
-
-        try {
-            const res = await fetch(`/api/contacts/${contactId}/addresses/${addressId}`, {
-                method: "DELETE"
-            })
-
-            const data = await res.json()
-
-            if (!res.ok) {
-                toast.error(data.message || "Address gagal dihapus");
-                return;
+        deleteContact(addressId, {
+            onSuccess: () => {
+                setIsOpen(false)
             }
-
-            toast.success(data.message || "Address berhasil dihapus");
-            setIsOpen(false)
-            onSuccess()
-        } catch (err) {
-            console.log(err)
-            toast.error("Server error, please try again later.");
-        } finally {
-            setIsLoading(false)
-        }
+        })
     }
 
     return (
@@ -66,9 +47,9 @@ export default function DeleteAddressDialog({ contactId, addressId, onSuccess }:
                         variant="destructive"
                         className="cursor-pointer"
                         onClick={handleDelete}
-                        disabled={isLoading}
+                        disabled={isPending}
                     >
-                        {isLoading ? (
+                        {isPending ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 Deleting...

@@ -7,10 +7,9 @@ import UpdateAddressDialog from "./update-address-dialog";
 interface ListAddressCardProps {
     address: Address
     contactId: number
-    onSuccess: () => void
 }
 
-export default function ListAddressCard({ address, contactId, onSuccess }: ListAddressCardProps) {
+export default function ListAddressCard({ address, contactId }: ListAddressCardProps) {
     const details = [
         { icon: StretchVertical, description: "Street", value: address.street },
         { icon: Building2, description: "City", value: address.city },
@@ -46,7 +45,7 @@ export default function ListAddressCard({ address, contactId, onSuccess }: ListA
                 ))}
                 <div className="flex gap-2 justify-end">
                     <UpdateAddressDialog contactId={contactId} address={address} />
-                    <DeleteAddressDialog contactId={contactId} addressId={address.id} onSuccess={onSuccess} />
+                    <DeleteAddressDialog contactId={contactId} addressId={address.id} />
                 </div>
             </CardContent>
         </Card >

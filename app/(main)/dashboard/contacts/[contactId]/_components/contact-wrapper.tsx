@@ -13,7 +13,7 @@ interface ContactWrapperProps {
 
 export default function ContactWrapper({ contactId }: ContactWrapperProps) {
     const { data: contact, isLoading: isContactLoading } = useContact(Number(contactId));
-    const { data: addresses, isLoading: isAddressesLoading, refetch } = useAddresses(Number(contactId));
+    const { data: addresses, isLoading: isAddressesLoading } = useAddresses(Number(contactId));
 
     if (!contact) {
         return (
@@ -49,7 +49,7 @@ export default function ContactWrapper({ contactId }: ContactWrapperProps) {
                     </h1>
                 </div>
             </div>
-            <ContactCard contact={contact} addresses={addresses ?? []} onSuccess={refetch} />
+            <ContactCard contact={contact} addresses={addresses ?? []} />
         </div>
     );
 }

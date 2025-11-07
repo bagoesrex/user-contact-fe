@@ -5,10 +5,9 @@ import ListAddressCard from "./list-address-card";
 interface AddressWrapperProps {
     addresses: Address[]
     contactId: number
-    onSuccess: () => void
 }
 
-export default function AddressWrapper({ addresses, contactId, onSuccess }: AddressWrapperProps) {
+export default function AddressWrapper({ addresses, contactId }: AddressWrapperProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <CreateAddressDialog contactId={contactId} />
@@ -18,7 +17,6 @@ export default function AddressWrapper({ addresses, contactId, onSuccess }: Addr
                         key={address.id}
                         address={address}
                         contactId={contactId}
-                        onSuccess={onSuccess}
                     />
                 ))
             }

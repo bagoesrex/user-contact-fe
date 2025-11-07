@@ -84,3 +84,32 @@ export function useUpdateAddress(contactId: number) {
         },
     });
 }
+
+export function useDeleteAddress(contactId: number) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (id: number) => {
+            const res = await fetch(`/api/contacts/${contactId}/addresses/${id}`, {
+                method: "DELETE",
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || "Gagal menghapus address");
+            }
+
+            return data;
+        },
+        onSuccess: () => {
+            toast.success("Address berhasil dihapus!");
+            queryClient.invalidateQueries({
+                queryKey: ["contacts", contactId, "addresses"],
+            });
+        },
+        onError: (err: Error) => {
+            toast.error(err.message || "Terjadi kesalahan pada server.");
+        },
+    });
+}
