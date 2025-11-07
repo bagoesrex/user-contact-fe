@@ -27,6 +27,40 @@ export const useContacts = () => {
     });
 };
 
+export const useContact = (id?: number) => {
+    const queryClient = useQueryClient();
+
+    return useQuery<Contact>({
+        queryKey: ["contacts", id],
+        enabled: !!id,
+        queryFn: async () => {
+            try {
+
+                const res = await fetch(`/api/contacts/${id}`);
+                const data = await res.json();
+
+                if (!res.ok) {
+                    toast.error(data.message || "Gagal memuat detail kontak");
+                    return
+                }
+
+                return data.contact;
+            } catch (err) {
+                console.error(err);
+                toast.error("Terjadi kesalahan pada server.");
+                return;
+            }
+        },
+        initialData: () => {
+            const contacts = queryClient.getQueryData<Contact[]>(["contacts"]);
+            return contacts?.find((c) => c.id === id);
+        },
+        staleTime: 1000 * 60 * 5,
+        retry: false,
+        refetchOnWindowFocus: false,
+    });
+};
+
 export function useCreateContact() {
     const queryClient = useQueryClient();
 

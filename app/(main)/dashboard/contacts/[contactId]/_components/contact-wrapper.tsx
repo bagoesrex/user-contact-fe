@@ -1,50 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import ContactCard from "./contact-card";
-import { Contact } from "@/types/contact";
 import { ArrowLeft, IdCard, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Address } from "@/types/address";
+import { useContact } from "@/hooks/use-contacts";
+import { useAddresses } from "@/hooks/use-addresses";
 
 interface ContactWrapperProps {
     contactId: string;
 }
 
 export default function ContactWrapper({ contactId }: ContactWrapperProps) {
-    const [contact, setContact] = useState<Contact>();
-    const [addresses, setAddresses] = useState<Address[]>([])
-
-    async function fetchContactData() {
-        try {
-            const [contactRes, addressRes] = await Promise.all([
-                fetch(`/api/contacts/${contactId}`),
-                fetch(`/api/contacts/${contactId}/addresses`)
-            ]);
-
-            const [contactData, addressData] = await Promise.all([
-                contactRes.json(),
-                addressRes.json()
-            ]);
-
-            if (!contactRes.ok) toast.error(contactData.message);
-            if (!addressRes.ok) toast.error(addressData.message);
-
-            setContact(contactData.contact || null);
-            setAddresses(addressData.addresses || []);
-        } catch (err) {
-            console.error(err);
-            toast.error("Terjadi kesalahan pada server.");
-        }
-    }
-
-    useEffect(() => {
-        fetchContactData()
-    }, [contactId]);
+    const { data: contact, isLoading: isContactLoading } = useContact(Number(contactId));
+    const { data: addresses, isLoading: isAddressesLoading, refetch } = useAddresses(Number(contactId));
 
     if (!contact) {
+        return (
+            <div className="flex items-center justify-center h-[80vh]">
+                <span className="ml-2 text-primary font-medium">Contact not found.</span>
+            </div>
+        );
+    }
+
+    if (isContactLoading || isAddressesLoading) {
         return (
             <div className="flex items-center justify-center h-[80vh]">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -70,7 +49,7 @@ export default function ContactWrapper({ contactId }: ContactWrapperProps) {
                     </h1>
                 </div>
             </div>
-            <ContactCard contact={contact} addresses={addresses} onSuccess={fetchContactData} />
+            <ContactCard contact={contact} addresses={addresses ?? []} onSuccess={refetch} />
         </div>
     );
 }
