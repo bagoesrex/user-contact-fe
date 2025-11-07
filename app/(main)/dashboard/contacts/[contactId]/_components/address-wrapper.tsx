@@ -11,7 +11,7 @@ interface AddressWrapperProps {
 export default function AddressWrapper({ addresses, contactId, onSuccess }: AddressWrapperProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <CreateAddressDialog contactId={contactId} onSuccess={onSuccess} />
+            <CreateAddressDialog contactId={contactId} />
             {
                 addresses.map((address) => (
                     <ListAddressCard

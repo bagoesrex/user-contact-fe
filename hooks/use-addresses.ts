@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Address } from "@/types/address";
+import { Address, AddressInput } from "@/types/address";
 
 export const useAddresses = (contactId?: number) => {
     return useQuery<Address[]>({
@@ -22,3 +22,34 @@ export const useAddresses = (contactId?: number) => {
         refetchOnWindowFocus: false,
     });
 };
+
+export function useCreateAddress(contactId: number) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (values: AddressInput) => {
+            const res = await fetch(`/api/contacts/${contactId}/addresses`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || "Gagal membuat address");
+            }
+
+            return data as { address: Address };
+        },
+        onSuccess: () => {
+            toast.success("Berhasil membuat address!");
+            queryClient.invalidateQueries({
+                queryKey: ["contacts", contactId, "addresses"],
+            });
+        },
+        onError: (err: Error) => {
+            toast.error(err.message || "Terjadi kesalahan pada server.");
+        },
+    });
+}

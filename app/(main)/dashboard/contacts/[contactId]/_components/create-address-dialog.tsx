@@ -8,9 +8,9 @@ import z from "zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import CreateAddressCard from "./create-address-card";
+import { useCreateAddress } from "@/hooks/use-addresses";
 
 const addressSchema = z.object({
     street: z.string().max(100).optional(),
@@ -22,12 +22,10 @@ const addressSchema = z.object({
 
 interface CreateAddressDialogProps {
     contactId: number
-    onSuccess: () => void
 }
 
-export function CreateAddressDialog({ contactId, onSuccess }: CreateAddressDialogProps) {
+export function CreateAddressDialog({ contactId }: CreateAddressDialogProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
 
     const form = useForm<z.infer<typeof addressSchema>>({
         resolver: zodResolver(addressSchema),
@@ -40,33 +38,15 @@ export function CreateAddressDialog({ contactId, onSuccess }: CreateAddressDialo
         },
     })
 
+    const { mutate: createAddress, isPending } = useCreateAddress(contactId)
+
     async function onSubmit(values: z.infer<typeof addressSchema>) {
-        setIsLoading(true)
-
-        try {
-            const res = await fetch(`/api/contacts/${contactId}/addresses`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
-            })
-
-            const data = await res.json()
-
-            if (!res.ok) {
-                toast.error(data.message)
-                return
+        createAddress(values, {
+            onSuccess: () => {
+                form.reset();
+                setIsOpen(false);
             }
-
-            toast.success("Berhasil membuat address!")
-            onSuccess()
-            form.reset()
-            setIsOpen(false)
-        } catch (err) {
-            console.error(err)
-            toast.error("Terjadi kesalahan pada server.")
-        } finally {
-            setIsLoading(false)
-        }
+        })
     }
 
     return (
@@ -161,12 +141,12 @@ export function CreateAddressDialog({ contactId, onSuccess }: CreateAddressDialo
 
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" disabled={isLoading} className="cursor-pointer">
+                                <Button type="button" variant="outline" disabled={isPending} className="cursor-pointer">
                                     Cancel
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" disabled={isLoading} className="cursor-pointer">
-                                {isLoading ? (
+                            <Button type="submit" disabled={isPending} className="cursor-pointer">
+                                {isPending ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                         Saving...
