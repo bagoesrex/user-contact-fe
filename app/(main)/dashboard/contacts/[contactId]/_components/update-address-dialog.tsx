@@ -2,12 +2,12 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { useUpdateAddress } from "@/hooks/use-addresses"
 import { Address } from "@/types/address"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, SquarePen, UserPen } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { toast } from "sonner"
 import z from "zod"
 
 const addressSchema = z.object({
@@ -21,12 +21,10 @@ const addressSchema = z.object({
 interface UpdateAddressDialogProps {
     contactId: number
     address: Address
-    onSuccess: () => void
 }
 
-export default function UpdateAddressDialog({ contactId, address, onSuccess }: UpdateAddressDialogProps) {
+export default function UpdateAddressDialog({ contactId, address }: UpdateAddressDialogProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
 
     const form = useForm<z.infer<typeof addressSchema>>({
         resolver: zodResolver(addressSchema),
@@ -39,33 +37,18 @@ export default function UpdateAddressDialog({ contactId, address, onSuccess }: U
         },
     })
 
+    const { mutate: updateAddress, isPending } = useUpdateAddress(contactId);
+
     async function onSubmit(values: z.infer<typeof addressSchema>) {
-        setIsLoading(true)
-
-        try {
-            const res = await fetch(`/api/contacts/${contactId}/addresses/${address.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
-            })
-
-            const data = await res.json()
-
-            if (!res.ok) {
-                toast.error(data.message)
-                return
+        updateAddress(
+            { id: address.id, values },
+            {
+                onSuccess: () => {
+                    form.reset()
+                    setIsOpen(false)
+                }
             }
-
-            toast.success("Berhasil memperbarui address!")
-            form.reset()
-            setIsOpen(false)
-            onSuccess()
-        } catch (err) {
-            console.error(err)
-            toast.error("Terjadi kesalahan pada server.")
-        } finally {
-            setIsLoading(false)
-        }
+        )
     }
 
     useEffect(() => {
@@ -173,12 +156,12 @@ export default function UpdateAddressDialog({ contactId, address, onSuccess }: U
 
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" disabled={isLoading} className="cursor-pointer">
+                                <Button type="button" variant="outline" disabled={isPending} className="cursor-pointer">
                                     Cancel
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" disabled={isLoading} className="cursor-pointer">
-                                {isLoading ? (
+                            <Button type="submit" disabled={isPending} className="cursor-pointer">
+                                {isPending ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                         Saving...

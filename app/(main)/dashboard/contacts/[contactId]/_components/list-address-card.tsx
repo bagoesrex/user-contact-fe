@@ -45,7 +45,7 @@ export default function ListAddressCard({ address, contactId, onSuccess }: ListA
                     </div>
                 ))}
                 <div className="flex gap-2 justify-end">
-                    <UpdateAddressDialog contactId={contactId} address={address} onSuccess={onSuccess} />
+                    <UpdateAddressDialog contactId={contactId} address={address} />
                     <DeleteAddressDialog contactId={contactId} addressId={address.id} onSuccess={onSuccess} />
                 </div>
             </CardContent>
