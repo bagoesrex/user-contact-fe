@@ -6,10 +6,12 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Header() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const queryClient = useQueryClient();
 
     async function handleLogout() {
         setIsLoading(true);
@@ -25,6 +27,8 @@ export default function Header() {
                 toast.error(data.message || "Logout failed");
                 return;
             }
+
+            queryClient.clear()
 
             toast.success(data.message || "Logout successful");
 
